@@ -362,6 +362,7 @@ ul.skills {
   background-size: 30px 30px;
   opacity: .4;
   transition: all .5s;
+  text-align: right;
 }
 
 .tweet {
@@ -376,3 +377,5 @@ ul.skills {
 .social:hover {
   opacity: 1;
 }
+
+
