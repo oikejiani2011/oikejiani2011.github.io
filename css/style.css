@@ -365,15 +365,7 @@ ul.skills {
   text-align: right;
 }
 
-.tweet {
-  background-image: url(images/twitter.svg);
-}
-.link {
-  background-image: url(images/linkedin.svg);
-}
-.git {
-  background-image: url(images/github.svg);
-}
+
 .social:hover {
   opacity: 1;
 }
