@@ -1,105 +1,195 @@
-const questions = [ 
-  { question: 'What color is broccoli?', answers: [ 'red', 'orange', 'pink', 'green' ], correctAnswer: 'green', qstno: '1/5'}, 
-  { question: 'What is the current year?', answers: [ '1970', '2015', '2020', '2005' ], correctAnswer: '2020', qstno: '2/5' }, 
-  { question: 'What is color is the sky at noon?', answers: [ 'black', 'blue', 'yellow', 'magenta' ], correctAnswer: 'blue', qstno: '3/5' }, 
-  { question: 'What disease is resposible for the current pandemic?', answers: [ 'HIV', 'SARS', 'COVID-19', 'malaria' ], correctAnswer: 'COVID-19', qstno: '4/5' }, 
-  { question: 'What is next year?', answers: [ '1970', '2015', '2021', '2005' ], correctAnswer: '2021', qstno: '5/5' } ];
 
-let currentQuestion = 0;
 
-function generateMainPage()
-{
-  $("main").html(`
-  <div class="mainPage">
-  <h2>My Quiz</h2>
-  <p>This is my quiz project. Have Fun!</p>
-<button type="submit" class="start">Start</button>
-</div>
-`)
-}
 
-function renderCurrentQuestionAndAnswers(index)
-{
-  $("main").html("");
-  $("main").append(`
- 		<form class="questionForm">
-		<fieldset class="radio">
-		<legend>${questions[index].question}</legend>`);
+
+
+
+'use strict';
+
+const store = {
+  
+  questions: [{
+    question: 'what color is broccoli?',
+    answers: [ 'red', 'orange', 'pink', 'green', 'blue' ],
+    correctAnswer: 'green',
    
-for (let i = 0; i < questions[index].answers.length; i++)
- {
-   $(".radio").append(`
-   <input type="radio" name="answers" value="${questions[index].answers[i]}" required>${questions[index].answers[i]}<br>`);
- }
-  $("main").append(`
-	</fieldset>
-  <button type="submit" class="submit">Submit</button>
-  <button class="continue">Next Question</button>
-	</form>`);
-  submitQuiz();
-  nextQuestion();
-}
-
-function startQuiz()
-{
-  $(".start").on("click", function(){
-    renderCurrentQuestionAndAnswers(currentQuestion);
-    currentQuestion++;
-  });
-     
-}
-   
-function submitQuiz()
-{   
-    $(".submit").on("click", function(){
-     let currentQuestionIndex = currentQuestion - 1; 
-     let correctAnswer = questions[currentQuestion - 1].correctAnswer;
-     let selectedAnswer = $("input[name=answers]:checked").val();
-     if(!selectedAnswer)
-     {
-       alert("Please select an option");
-       return;
-     }
-     $('.continue').show();
-     if(correctAnswer == selectedAnswer) 
-     {
-       alert("Correct!")
-       
-     }
-     else
-     { 
-     alert("Wrong answer! Correct answer is: "+ correctAnswer);
-       
-     }
-    
-  });
-}
-
-function nextQuestion()
-{
-  $(".continue").on("click", function(){
-  let selectedAnswer = $("input[name=answers]:checked").val();
-  if(!selectedAnswer)
-   {
-  alert("Please select an answer")
-  return;
-  }
-  $("#result").html("");
-  if(currentQuestion == questions.length)
+  },
   {
-       alert("Quiz ends");
-       
-   }
-    renderCurrentQuestionAndAnswers(currentQuestion);
-    currentQuestion++;
+    question: 'what is the current year?',
+    answers: [ '1970', '2015', '2020', '2005', '2000' ],
+    correctAnswer: '2020',
+   
+  },
+  {
+    question: 'What is color is the sky at noon?',
+    answers: [ 'black', 'blue', 'yellow', 'magenta', 'grey' ],
+    correctAnswer: 'blue',
     
+  },
+  {
+    question: 'What disease is respossible for the current pandemic?',
+    answers: [ 'HIV', 'SARS', 'COVID-19', 'malaria', 'Ebola' ],
+    correctAnswer: 'COVID-19',  
+  },
+  {
+    question: 'What is next year?',
+    answers: [ '1970', '2015', '2021', '2005', '2020' ],
+    correctAnswer: '2021', 
+  }
+  ],
+  feedbackGiven: true,
+  quizStarted: false,
+  questionNumber: 0,
+  score: 0,
+  currentAnswer: ''
+};
+
+function generateMainPage() {
+  return `
+      <div class="mainPage">
+        <h2>My Quiz</h2>
+        <p>This is a quiz</p>
+        <button type='submit' id="startquiz">Start Quiz</button>
+        </form>
+      </div>`;
+}
+
+function generateQuestionPage() {
+  const question = store.questions[store.questionNumber];
+  const answers = question.answers.map(function(answer,index){return `
+  <input type="radio" id="answer${index}" name="answer" value="${answer}" required>
+        <label for="answer${index}">${answer}</label></br>`;
+  });
+
+  return `
+  <div class="mainPage">
+    <form id="question">
+      <h2>${question.question}</h2>
+      ${answers.join('')}
+      <button type="form">Submit Answer</button>
+    </form>
+      <div class="quiz-info">
+        <p>${store.questionNumber+1}/5</p>
+        <p>${store.score}/${store.questionNumber} Correct</p>
+      </div>
+  `;
+  
+}
+
+
+
+function generateFinalPage(){
+  let feedback = '';
+  if(store.currentAnswer===store.questions[store.questionNumber].correctAnswer){
+    feedback = `Great job! You were great!`;
+  } else{
+    feedback = `not bad!`;
+  }
+  return`
+  <div class="mainPage">
+      <h2>Question ${store.questionNumber+1}</h2>
+      <p>The correct answer was: ${store.questions[store.questionNumber].correctAnswer}.</p>
+      ${feedback}
+      <p>End of the Quiz!<p>
+      <p>You scored ${store.score}/${store.questionNumber+1}</p>
+      <button type='submit' id="home">Home</button>
+      </form>
+      <button type='submit' id="try-again">Try Again</button>
+      </form>
+    </div>
+    `;
+}
+
+function generateFeedbackPage(){
+  let feedback = '';
+  if(store.currentAnswer===store.questions[store.questionNumber].correctAnswer){
+    feedback = `Great job! You're doing good!`;
+  } else{
+    feedback = `Better luck next time!`;
+  }
+  return`
+  <div class="mainPage">
+      <h2>Question ${store.questionNumber+1}</h2>
+      
+      <p>The correct answer was: ${store.questions[store.questionNumber].correctAnswer}.</p>
+      ${feedback}
+      <p>You have gotten ${store.score}/${store.questionNumber+1} questions right so far.</p>
+      <button type='submit' id="continue">Continue</button>
+      </form>
+    </div>
+    `;
+}
+
+function handleStartButton(){
+  $('main').on('click','#startquiz', function(e){
+    store.quizStarted = true;
+    render();
   });
 }
 
-function main()
-{
-  generateMainPage();
-  startQuiz();
+function handleTryAgainButton(){
+  $('main').on('click','#try-again', function(e){
+    store.currentAnswer = '';
+    store.score = 0;
+    store.questionNumber = 0;
+    store.feedbackGiven = true;
+    render();
+  });
 }
 
+function handleHomeButton(){
+  $('main').on('click','#home', function(e){
+    store.currentAnswer = '';
+    store.score = 0;
+    store.questionNumber = 0;
+    store.feedbackGiven = true;
+    store.quizStarted = false;
+    render();
+  });
+}
+
+function handleSubmitButton(){
+  $('main').on('submit','#question', function(e){
+    e.preventDefault();
+    store.currentAnswer = $(`input[name='answer']:checked`).val();
+    store.feedbackGiven = false;
+    if(store.currentAnswer===store.questions[store.questionNumber].correctAnswer){
+      store.score++;
+    }
+    console.log(store.currentAnswer);
+    render();
+  });
+}
+
+function handleContinueButton(){
+  $('main').on('click','#continue', function(e){
+    store.feedbackGiven = true;
+    store.currentAnswer = '';
+    store.questionNumber++;
+    render();
+  });
+}
+
+function render() {
+  let html = '';
+  if (store.quizStarted === false) {
+    html = generateMainPage();
+  } else if (store.feedbackGiven === true) {
+    html = generateQuestionPage();
+  } else if (store.feedbackGiven === false && store.questionNumber === store.questions.length-1){
+    html = generateFinalPage();
+  } else{
+    html = generateFeedbackPage();
+  }
+  $('main').html(html);
+}
+
+function main() {
+  render();
+  handleStartButton();
+  handleSubmitButton();
+  handleContinueButton();
+  handleTryAgainButton();
+  handleHomeButton();
+}
 $(main);
