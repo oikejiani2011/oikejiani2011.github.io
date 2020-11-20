@@ -70,7 +70,7 @@ function generateQuestionPage() {
     </form>
       <div class="quiz-info">
         <p>${store.questionNumber+1}/5</p>
-        <p>${store.score}/${store.questionNumber} Correct</p>
+        <p>${store.score}/5 Correct</p>
       </div>
   `;
   
