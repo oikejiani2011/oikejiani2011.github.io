@@ -1,0 +1,55 @@
+html, body{
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    width: 100%;
+    
+}
+
+header{
+    margin: 0px auto;
+    font-size: 2em;
+    padding: 10px;
+    color: brown;
+}
+
+input, button
+{
+    border-radius: 5px;
+    width: 200px;
+    height: 30px;
+    margin: 6px;
+    font-size: 1.5em;
+}
+
+label{
+    font-size: 1.2em;
+    padding: 15px;
+}
+
+.fieldClass 
+{
+    display: grid;
+    grid-template-columns: 50% 50%;
+    width: 20%;
+    margin: 0px auto;
+}
+
+ul{
+    list-style: none;
+}
+
+#msgInfo
+{
+    text-align: center;
+}
+
+.hideEditbutton
+{
+    display: none;
+}
+
+.revealEditButton
+{
+    display: block;
+}
