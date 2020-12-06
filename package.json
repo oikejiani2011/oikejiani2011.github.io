@@ -1,5 +1,5 @@
 {
-  "name": "Bookmark-app",
+  "name": "bookmarkproject",
   "version": "1.0.0",
   "description": "Bookmark project at Thinkful",
   "main": "index.js",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/oikejiani2011/Bookmark-app.git"
+    "url": "git+https://github.com/johnakhilomen/bookMarkProject.git"
   },
-  "author": "okwudili ikejiani",
+  "author": "John Akhilomen",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/oikejiani2011/Bookmark-app/issues"
+    "url": "https://github.com/johnakhilomen/bookMarkProject/issues"
   },
-  "homepage": "https://github.com/oikejiani2011/Bookmark-app#readme",
+  "homepage": "https://github.com/johnakhilomen/bookMarkProject#readme",
   "dependencies": {
     "cuid": "^2.1.8",
     "jquery": "^3.5.1",
