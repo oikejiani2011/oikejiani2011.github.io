@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/johnakhilomen/bookMarkProject.git"
+    "url": "git+https://github.com/oikejiani2011/oikejiani2011.github.io"
   },
-  "author": "John Akhilomen",
+  "author": "Okwudili-Ikejiani",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/johnakhilomen/bookMarkProject/issues"
   },
-  "homepage": "https://github.com/johnakhilomen/bookMarkProject#readme",
+  "homepage": "https://github.com/oikejiani2011/oikejiani2011.github.io",
   "dependencies": {
     "cuid": "^2.1.8",
     "jquery": "^3.5.1",
