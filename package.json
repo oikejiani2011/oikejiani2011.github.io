@@ -9,15 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thinkful-ei-unicorn/bookmark-app-arian-yazdi.git"
+    "url": "git+https://github.com/oikejiani2011/oikejiani2011.github.io.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/thinkful-ei-unicorn/bookmark-app-arian-yazdi/issues"
+    "url": "https://github.com/oikejiani2011/oikejiani2011.github.io/issues"
   },
-  "homepage": "https://github.com/thinkful-ei-unicorn/bookmark-app-arian-yazdi#readme",
+  "homepage": "https://github.com/oikejiani2011/oikejiani2011.github.io/blob/main/README.md",
   "dependencies": {
     "cuid": "^2.1.8",
     "jquery": "^3.5.1"
