@@ -1,19 +1,49 @@
-export const STORE =
-[{
-    id: "googleBookmark",
-    title: "Google Bookmark",
-    url: "www.google.com",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi auctor felis ac ante tincidunt, nec mattis ante vestibulum. Morbi et arcu eu odio tincidunt feugiat nec sit amet libero. Proin justo nibh, dignissim eu tincidunt porttitor, placerat nec magna. Sed dui leo, sodales a pellentesque a, fermentum tempor mauris. Etiam ac posuere velit, ac euismod risus. Sed libero ante, eleifend laoreet enim eu, consequat egestas elit. Aliquam eget lacus eget ante sollicitudin bibendum sit amet vitae sapien. Etiam congue interdum blandit. Vestibulum ut nulla nisl. Nulla tristique at libero et rutrum. Aliquam in tortor in quam cursus aliquam. Donec ultrices lectus ac molestie dictum. Ut sodales metus in risus varius fermentum."
-},
-{
-    id: "yahooBookmark",
-    title: "Yahoo Bookmark",
-    url: "www.yahoo.com",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi auctor felis ac ante tincidunt, nec mattis ante vestibulum. Morbi et arcu eu odio tincidunt feugiat nec sit amet libero. Proin justo nibh, dignissim eu tincidunt porttitor, placerat nec magna. Sed dui leo, sodales a pellentesque a, fermentum tempor mauris. Etiam ac posuere velit, ac euismod risus. Sed libero ante, eleifend laoreet enim eu, consequat egestas elit. Aliquam eget lacus eget ante sollicitudin bibendum sit amet vitae sapien. Etiam congue interdum blandit. Vestibulum ut nulla nisl. Nulla tristique at libero et rutrum. Aliquam in tortor in quam cursus aliquam. Donec ultrices lectus ac molestie dictum. Ut sodales metus in risus varius fermentum."
-},
-{
-    id: "aolBookmark",
-    title: "AOL Bookmark",
-    url: "www.aol.com",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi auctor felis ac ante tincidunt, nec mattis ante vestibulum. Morbi et arcu eu odio tincidunt feugiat nec sit amet libero. Proin justo nibh, dignissim eu tincidunt porttitor, placerat nec magna. Sed dui leo, sodales a pellentesque a, fermentum tempor mauris. Etiam ac posuere velit, ac euismod risus. Sed libero ante, eleifend laoreet enim eu, consequat egestas elit. Aliquam eget lacus eget ante sollicitudin bibendum sit amet vitae sapien. Etiam congue interdum blandit. Vestibulum ut nulla nisl. Nulla tristique at libero et rutrum. Aliquam in tortor in quam cursus aliquam. Donec ultrices lectus ac molestie dictum. Ut sodales metus in risus varius fermentum."
-}]
+const bookmarks = [];
+let adding = false;
+let error = null;
+let filter = 0;
+
+const changeAddNew = function () {
+    this.adding = !this.adding;
+}
+
+const removeItem = function (id) {
+    this.bookmarks = this.bookmarks.filter(currentItem => currentItem.id !== id);
+}
+
+const setError = function (err) {
+    this.error = err;
+}
+
+const filterBookmarks = function (target) {
+    this.filter = target;
+}
+
+const createItem = function (bookmark) {
+    bookmark.expanded = false;
+    bookmarks.push(bookmark);
+}
+
+const findByID = function (id) {
+    return bookmarks.find(currentItem => currentItem.id === id);
+}
+
+const toggleExpanded = function (id) {
+    bookmarks.map(currentItem => currentItem.expanded = false);
+    let currentBookmark = findByID(id);
+    currentBookmark.expanded = true;
+}
+
+export default {
+    bookmarks,
+    adding,
+    error,
+    filter,
+    changeAddNew,
+    removeItem,
+    setError,
+    filterBookmarks,
+    createItem,
+    findByID,
+    toggleExpanded,
+}

@@ -1,1 +1,0 @@
-export const endpointURL = "https://thinkful-list-api.herokuapp.com/andycharles/bookmarks";

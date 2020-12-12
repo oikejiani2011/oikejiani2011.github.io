@@ -1,94 +1,60 @@
-import {endpointURL} from "./params.js"
-//import { STORE } from "./store.js";
-import $ from "jquery";
-import cuid from 'cuid';
-import {generateButton} from "./generateForm.js";
-import {clearBookmarkList} from "./index.js"
+const baseUrl = 'https://thinkful-list-api.herokuapp.com/IanBruns/bookmarks'
 
-export let loadBookMarks = () => {
-    console.log(endpointURL)
-    fetch(endpointURL, { method: 'GET'})
-    .then(res => res.json())
-    .then(STORE => 
-        {
-            console.log(STORE);
+/**
+ * listApiFetch - Wrapper function for native `fetch` to standardize error handling.
+ * @param {string} url
+ * @param {object} options
+ * @returns {Promise} - resolve on all 2xx responses with JSON body
+ *                    - reject on non-2xx and non-JSON response with
+ *                      Object { code: Number, message: String }
+ */
 
-            STORE.forEach((bookmark)=> {
-                $("#bookmarkList ul").append(
-                    `<div id="${bookmark.id}" data-id=${cuid()}><li><h2>${bookmark.title}<h2></li>
-                    <li><i>${bookmark.url}</i></li>
-                    <li><p>${bookmark.description}</p></li>
-                    <li>${generateButton("Remove", "remove", bookmark.id)}${generateButton("Edit", "edit", bookmark.id)}</li></div>`
-                )
-                $(`#remove${bookmark.id}`).click((evt)=>{
-                    const id = $(event.currentTarget).attr('data-id');
-                    //$("div[id="+id+"]").remove();
-                    deleteBookmark(id);
-                    clearBookmarkList();
-                    setTimeout(()=>{
-                        loadBookMarks();
-                    }, 700)
-                })
-                $(`#edit${bookmark.id}`).click(()=>{
-                    let currentBookmark = STORE.find((b)=>b.id == bookmark.id);
-                    let objectParsed = JSON.parse(JSON.stringify(currentBookmark));
-                    $("#bookmarkTitle").val(objectParsed.title);
-                    $("#urlDescription").val(objectParsed.url);
-                    $("#editBookmarkdefault").removeClass("hideEditbutton").addClass("revealEditbutton");
-                    $("#editBookmarkdefault").click(()=>{
-                        const object = {
-                            title: $("#bookmarkTitle").val(),
-                            url: $("#urlDescription").val(),
-                         }
-                        editBookmark(bookmark.id, object)
-                    })
-                    
-                    console.log("You clicked edit!" +  objectParsed);
-                })
-            });
+const listApiFetch = function (...args) {
+    //function for fetching from the api, with error handling
+    let err;
+
+    return fetch(...args)
+        .then(res => {
+            if (!res.ok) {
+                err = { code: res.status };
+
+                if (!res.headers.get('content-type').includes('json')) {
+                    err.message = res.statusText;
+                    return Promise.reject(err);
+                }
+            }
+            return res.json();
+        })
+        .then(data => {
+            if (err) {
+                err.message = data.message;
+                return Promise.reject(err);
+            }
+            return data;
         });
 }
 
-export let addBookmark = (bookmark) => {
-
-    fetch(endpointURL, {
-        method: 'post',
-        body:    JSON.stringify(bookmark),
-        headers: { 'Content-Type': 'application/json' },
-    })
-    .then(res => res.json())
-    .then(json => 
-        {
-            console.log(json);
-            $("#msgInfo").html("Bookmark added")
-        });
+const getBookmarks = function () {
+    return listApiFetch(baseUrl);
 }
 
-export let deleteBookmark = (id) => {
-
-    fetch(endpointURL+"/"+id, {
-        method: 'delete',
-        headers: { 'Content-Type': 'application/json' },
-    })
-    .then(res => res.json())
-    .then(json => 
-        {
-            $("#msgInfo").html("Bookmark deleted")
-        });
+const removeBookmark = function (id) {
+    return listApiFetch(baseUrl + '/' + id, {
+        method: 'DELETE'
+    });
 }
 
-export let editBookmark = (id, bookmark) => {
-
-    fetch(endpointURL+"/"+id, {
-        method: 'patch',
-        body:    JSON.stringify(bookmark),
+const createBookmark = function (title, url, desc, rating) {
+    let newBookmark = JSON.stringify({ title, url, desc, rating });
+    return listApiFetch(baseUrl, {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-    })
-    .then(res => res.json())
-    .then(json => 
-        {
-            console.log(json);
-            $("#msgInfo").html("Bookmark edited")
-        });
+        body: newBookmark
+    });
+}
 
+export default {
+    getBookmarks,
+    createBookmark,
+    removeBookmark
 }

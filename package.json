@@ -1,32 +1,27 @@
 {
-  "name": "bookmarkproject",
+  "name": "bookmark-app",
   "version": "1.0.0",
-  "description": "Bookmark project at Thinkful",
+  "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack"
+    "start": "webpack serve",
+    "build": "webpack --mode production"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/oikejiani2011/oikejiani2011.github.io"
-  },
-  "author": "Okwudili-Ikejiani",
+  "keywords": [],
+  "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/johnakhilomen/bookMarkProject/issues"
-  },
-  "homepage": "https://github.com/oikejiani2011/oikejiani2011.github.io",
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.15.1",
     "cuid": "^2.1.8",
-    "jquery": "^3.5.1",
-    "node-fetch": "^2.6.0",
-    "webpack": "^4.44.1",
-    "webpack-cli": "^3.3.12"
+    "jquery": "^3.5.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.11.4",
-    "@babel/preset-env": "^7.11.0",
-    "babel-loader": "^8.1.0"
+    "css-loader": "^5.0.1",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^4.5.0",
+    "style-loader": "^2.0.0",
+    "webpack": "^5.6.0",
+    "webpack-cli": "^4.2.0",
+    "webpack-dev-server": "^3.11.0"
   }
 }
