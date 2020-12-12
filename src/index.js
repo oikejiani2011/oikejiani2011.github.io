@@ -1,18 +1,23 @@
-import $ from 'jquery';
+import $ from 'jquery'
+import './index.css'
+import api from './api'
+import store from './store.js'
+import bookmarkList from './bookmark-list'
+import generateForm from './generateForm'
 
-import './index.css';
-import bookmarkList from './bookmark-list';
-import api from './api';
-import store from './store';
 
-function main() {
-    api.getBookmarks()
-        .then((bookmarks) => {
-            bookmarks.forEach((bookmark) => store.createItem(bookmark));
-            bookmarkList.render();
-        });
-    bookmarkList.bindEventListeners();
+
+const main = function () {
+  bookmarkList.renderPage()
+  api.getItems()
+  .then((items) => {
+    items.forEach((item) => store.addItem(item));
     bookmarkList.render();
-}
+  })
+  
+  bookmarkList.bindEventListeners();
+  bookmarkList.render();
+};
+
 
 $(main);

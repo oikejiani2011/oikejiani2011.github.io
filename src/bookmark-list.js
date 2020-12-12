@@ -1,184 +1,201 @@
-import $ from 'jquery'
-import store from './store'
-import api from './api';
-
-// HTML Strings ****************************************************************
+import $ from 'jquery';
+import store from './store';
+import api from './api'
+import generateForm from './generateForm'
 
 const generateItemElement = function (item) {
-    if (item.expanded === false) {
-        return ` <div data-id="${item.id}" class="page condensed">
-                <div class="rating align">
-                <h4>${item.title}</h4>
-                <p class="ofFive">Rating ${item.rating}/5</p>
-                </div>
-                </div>`;
-    } else {
-        return `<div data-id="${item.id}" class="page">
-                <div class="rating">
-                <div class ="purple">
-                <i class="fa fa-trash delete"></i>
-                </div>
-                <div class="rating align">
-                <h4>${item.title}</h4>
-                <p class="ofFive">Rating ${item.rating}/5</p>
-                </div>
-                </div>
-                    <div class="visit-desc">
-                    <div class='center'>
-                    <a class="button-style" href="${item.url}" target="_blank">Visit!</a>
-                    </div>
-                    <div class="disc-box">
-                    <p>${item.desc}</p>
-                    </div>
-                    </div>
-                </div>`;
-    }
-}
+  let itemTitle = `<span class="bookmark-item bookmark-item__checked">${item.title}</span>`;
+  let bookmarkRating = `<span class="bookmark-item bookmark-item__checked">${item.rating}/5</span>`
+  let bookmarkDescription = `<p>${item.desc}</p>
+    <a href="${item.url}">${item.url}</a>`
+  return `
+    <li class="js-item-element" data-item-id="${item.id}">
+      ${itemTitle}
+      ${bookmarkRating}
+      <div class="hidden description${item.id}">${bookmarkDescription}</div>
+      <div class="bookmark-item-controls">
+        ${generateForm.generateButton('Description', 'description-toggle', 'js-description-toggle')}
+        ${generateForm.generateButton('Delete', 'bookmark-item-delete', 'js-item-delete')}
+      </div>
+    </li>`;
+};
 
-const reviewAddButtonHtml = function () {
-    return `<form class="bookmark-submit">
-            <label for='url'>What do you call this link?</label><br />
-            <input type='text' id='title' name='title' /><br />
-            <label for='name'>Add the link here! (start with https://)</label><br />
-            <input type='text' id='url' name='url' /><br />
-            <label for='desc'>Description</label><br />
-            <input type='text' id='desc' name='desc' /><br />
-            <label for='email'>Rating</label><br />
-            <input type='number' id='rating' name='rating' min='1' max='5'/><br />
+const generateBookmarkItemsString = function (bookmarkList) {
+  const items = bookmarkList.map((item) => generateItemElement(item));
+  return items.join('');
+};
 
-            <input type='submit' class="submit new-bookmark button-style" value='Submit' />
-            </form>
-            <div class="visit-desc">
-            <div class='center'>
-            <button class='cancel button-style'>Cancel</button>
-            </div>
-            <div>`
-}
+const generateError = function (message) {
+  return `
+      <section class="error-content">
+        <button id="cancel-error">X</button>
+        <h2>${message}</h2>
+      </section>
+    `;
+};
 
-// EVENT SUPPORT *******************************************************
+const renderError = function () {
+  if (store.error) {
+    const er = generateError(store.error);
+    $('.error-container').html(er);
+  } else {
+    $('.error-container').html('');
+  }
+};
 
-const extractID = function (target) {
-    return $(target).data('id');
-}
+const handleCloseError = function () {
+  $('.error-container').on('click', '#cancel-error', () => {
+    store.setError(null);
+    renderError();
+  });
+};
 
-const createHtmlString = function (bookmarks) {
-    //take items from the store's bookmarks and turn them into
-    //usable html code
-    if (bookmarks.length === 1) {
-        return generateItemElement(bookmarks[0]);
-    }
-    const items = bookmarks.map(item => generateItemElement(item));
-    return items.join('');
-}
-
-// EVENTS ***************************************************************
-
-const handleBookmarkSubmit = function () {
-    //When the user clicks submit, grab all the values to create an object
-    //that will go into the store module
-    $('.bookmark-container').on('submit', '.bookmark-submit', e => {
-        e.preventDefault();
-
-        let title = $(e.currentTarget).closest('.bookmark-submit').find('#title').val();
-        let url = $(e.currentTarget).closest('.bookmark-submit').find('#url').val();
-        let desc = $(e.currentTarget).closest('.bookmark-submit').find('#desc').val();
-        let rating = $(e.currentTarget).closest('.bookmark-submit').find('#rating').val();
-
-        api.createBookmark(title, url, desc, rating)
-            .then(newBookmark => {
-                store.createItem(newBookmark);
-                store.adding = false;
-                render();
-            })
-            .catch((err) => {
-                alert(err.message);
-            });
-    });
-}
-
-const handleDeleteClicked = function () {
-    //When the user clicks the trashcan, we need to remove the item
-    //then render
-
-    $('.bookmark-storage').on('click', '.delete', e => {
-        let target = $(e.currentTarget).closest('.page')
-        let selectedBookmarkID = extractID(target);
-
-        api.removeBookmark(selectedBookmarkID)
-            .then(() => {
-                store.removeItem(selectedBookmarkID);
-                render();
-            })
-            .catch(err => {
-                alert(err.message);
-            })
-    });
-}
-
-const handleCancelClicked = function () {
-    //THis is so the user can back out of making hte
-    //new bookmark for whatever reason back to the
-    //starting page
-    $('.bookmark-storage').on('click', '.cancel', e => {
-        store.changeAddNew();
-        render();
-    });
-}
-
-const handleAddClicked = function () {
-    //if someone clicks on this add, load the page that will allow
-    //users to add a new page
-    $('.add').on('click', e => {
-        store.changeAddNew();
-        render();
-    });
-}
-
-const handleCondensedClicked = function () {
-    //If someone clicks in the box of bookmarks then change the style of the div
-    //to and expanded version that then details more information
-    $('.bookmark-storage').on('click', '.condensed', e => {
-        let selectedBookmarkID = extractID(e.currentTarget);
-        store.toggleExpanded(selectedBookmarkID);
-
-        render();
-    });
-}
-
-const handleFilterClicked = function () {
-    //When this is clicked, filter the array by the rating
-    $('.cancel').on('click', e => {
-        let filter = $(e.currentTarget).html();
-        store.filterBookmarks(filter);
-        render();
-    })
+const renderPage = function() {
+  $('#page').html(`
+    <div class="container">
+      <h1>Bookmarks</h1>
+      <article class="error-container">text</article>
+      <article class="form"><button class='newBookmark'>New Bookmark</button></article>
+      <div class='rating-select'>
+        <label for="rating-filter">Choose Rating:</label>
+        <select name="rating-filter" id="rating-filter">
+          <option value="0">all</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </div>
+      <section class='bookmarks'>
+        <ul class="bookmark-list js-bookmark-list">
+        </ul>
+      </section>
+    </div>
+  `)
 }
 
 const render = function () {
-    let htmlString = '';
+  renderError()
+  // Filter item list if store prop is true by item.checked === false
+  let items = [...store.items];
+  let filtered = items.filter(item => {
+      return item.rating >= store.filter
+    })
+  console.log(store.filter)
+  // render the bookmark list in the DOM
+  const bookmarkListItemsString = generateBookmarkItemsString(filtered);
 
-    if (store.adding === true) {
-        htmlString = reviewAddButtonHtml()
-    } else {
-        let bookmarks = store.bookmarks.filter(currentItem => {
-            return currentItem.rating >= store.filter;
-        });
+  // insert that HTML into the DOM
+  
+  $('.js-bookmark-list').html(bookmarkListItemsString);
+};
 
-        htmlString = createHtmlString(bookmarks);
-    }
+const renderForm = function() {
+  $('.form').html(`
+    <section class='forms'>
+      <form id="js-bookmark-list-form">
+        <section class="form1">
+          ${generateForm.generateTextField('Bookmark Title: ', 'bookmark-entry', 'e.g., Google')}
+          ${generateForm.generateTextField('Bookmark URL: ', 'bookmark-url', 'e.g. https://www.google.com')}
+        </section>
+        <section class="form2">
+          ${generateForm.generateTextField('Bookmark Description: ', 'bookmark-description', 'e.g. Favorite site')}
+          ${generateForm.generateNumberOption('Bookmark rating: ', 'bookmark-rating')}
+        </section>
+          <button class="submit" type="submit">Add bookmark</button>
+      </form>
+    </section>
+  `)
+}
 
-    $('.bookmark-storage').html(htmlString);
+const renderClearInput = function() {
+  $('#bookmark-entry').val('')
+  $('#bookmark-url').val('')
+  $('#bookmark-description').val('')
+  $('#bookmark-rating').val('')
+}
+
+const handleNewBookmark = function() {
+  $('.newBookmark').click(evt => {
+    $(evt.currentTarget).toggleClass('hidden')
+    console.log('clicked')
+    renderForm()
+    render()
+  })
+}
+
+const handleNewItemSubmit = function () {
+  $('.form').submit(function (event) {
+    event.preventDefault();
+    const title = $('#bookmark-entry').val();
+    const url = $('#bookmark-url').val();
+    const description = $('#bookmark-description').val();
+    const rating = $('#bookmark-rating').val();
+    api.createItem(title, url, description, rating)
+      .then((newItem) => {
+        store.addItem(newItem);
+        render();
+        renderClearInput()
+      })
+      .catch((error) => {
+        store.setError(error.message);
+        renderError();
+      });
+  });
+};
+
+const getItemIdFromElement = function (item) {
+  return $(item)
+    .closest('.js-item-element')
+    .data('item-id');
+};
+
+const handleDeleteItemClicked = function () {
+  // like in `handleItemCheckClicked`, we use event delegation
+  $('.js-bookmark-list').on('click', '.bookmark-item-delete', event => {
+    // get the index of the item in store.items
+    const id = getItemIdFromElement(event.currentTarget);
+    // delete the item
+    api.deleteItem(id)
+    .then(() => {
+      store.findAndDelete(id)
+      render()
+    })
+    .catch((error) => {
+      console.log(error);
+      if(error) { store.setError(error.message)};
+      renderError()
+    });
+  });
+};
+
+const handleDescription = function() {
+  $('.js-bookmark-list').on('click', '.description-toggle', event => {
+    const id = getItemIdFromElement(event.currentTarget)
+    console.log(event.currentTarget)
+    $(`.description${id}`).toggleClass('hidden')
+  })
+}
+
+const handleFilter = function() {
+  $( "#rating-filter" ).change(function() {
+    store.filter = $('#rating-filter').val()
+    render()
+  })
 }
 
 const bindEventListeners = function () {
-    handleCancelClicked();
-    handleAddClicked();
-    handleCondensedClicked();
-    handleDeleteClicked();
-    handleBookmarkSubmit();
-    handleFilterClicked();
-}
-
+  handleNewBookmark();
+  handleNewItemSubmit();
+  handleDeleteItemClicked();
+  handleDescription();
+  handleCloseError()
+  handleFilter()
+};
+// This object contains the only exposed methods from this module:
 export default {
-    bindEventListeners, render
-}
+  renderPage,
+  render,
+  bindEventListeners
+};

@@ -4,14 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "webpack serve",
+    "start": "webpack-dev-server",
     "build": "webpack --mode production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thinkful-ei-unicorn/bookmark-app-arian-yazdi.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thinkful-ei-unicorn/bookmark-app-arian-yazdi/issues"
+  },
+  "homepage": "https://github.com/thinkful-ei-unicorn/bookmark-app-arian-yazdi#readme",
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.15.1",
     "cuid": "^2.1.8",
     "jquery": "^3.5.1"
   },
@@ -20,8 +27,8 @@
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^4.5.0",
     "style-loader": "^2.0.0",
-    "webpack": "^5.6.0",
-    "webpack-cli": "^4.2.0",
-    "webpack-dev-server": "^3.11.0"
+    "webpack": "^4.41.3",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0"
   }
 }
