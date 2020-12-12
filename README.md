@@ -1,4 +1,4 @@
-https://thinkful-ei-unicorn.github.io/bookmark-app-arian-yazdi/
+https://oikejiani2011.github.io/
 
 this is an app that allows users to keep all of their bookmarks in one place.
 
